@@ -28,6 +28,7 @@
                             <div class="flex items-start justify-between mb-4">
                                 <h1 class="text-2xl font-bold">{{ $book->title }}</h1>
 
+                                {{-- 未実装のため一時的にコメントアウト（お気に入り機能：マイルストーン6で復活）
                                 <!-- お気に入りボタン -->
                                 @auth
                                     @if(Auth::user()->favoriteBooks->contains($book->id))
@@ -56,6 +57,7 @@
                                         </svg>
                                     </a>
                                 @endauth
+                                --}}
                             </div>
 
                             <p class="text-gray-600 mb-2"><strong>著者:</strong> {{ $book->author }}</p>
@@ -93,6 +95,7 @@
                         </div>
                     </div>
 
+                    {{-- 未実装のため一時的にコメントアウト（レビュー機能：マイルストーン5で復活）
                     <!-- レビューセクション -->
                     <div class="mt-8 pt-8 border-t border-gray-200">
                         <h2 class="text-xl font-bold mb-4">レビュー</h2>
@@ -211,6 +214,7 @@
                             <p class="text-gray-500">まだレビューはありません。</p>
                         @endif
                     </div>
+                    --}}
                 </div>
             </div>
 
