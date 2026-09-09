@@ -29,36 +29,43 @@
                             <div class="flex items-start justify-between mb-4">
                                 <h1 class="text-2xl font-bold">{{ $book->title }}</h1>
 
-                                {{-- 未実装のため一時的にコメントアウト（お気に入り機能：マイルストーン6で復活）
                                 <!-- お気に入りボタン -->
                                 @auth
                                     @if (Auth::user()->favoriteBooks->contains($book->id))
                                         <form action="{{ route('favorites.toggle', $book) }}" method="POST" novalidate>
                                             @csrf
-                                            <button type="submit" class="text-red-500 hover:text-red-700" title="お気に入りから削除">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                            <button type="submit" class="text-red-500 hover:text-red-700"
+                                                title="お気に入りから削除">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path
+                                                        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                                                 </svg>
                                             </button>
                                         </form>
                                     @else
                                         <form action="{{ route('favorites.toggle', $book) }}" method="POST" novalidate>
                                             @csrf
-                                            <button type="submit" class="text-gray-400 hover:text-red-500" title="お気に入りに追加">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                            <button type="submit" class="text-gray-400 hover:text-red-500"
+                                                title="お気に入りに追加">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none"
+                                                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                                 </svg>
                                             </button>
                                         </form>
                                     @endif
                                 @else
-                                    <a href="{{ route('login') }}" class="text-gray-400 hover:text-red-500" title="お気に入りに追加するにはログインしてください">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                    <a href="{{ route('login') }}" class="text-gray-400 hover:text-red-500"
+                                        title="お気に入りに追加するにはログインしてください">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none"
+                                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                         </svg>
                                     </a>
                                 @endauth
-                                --}}
                             </div>
 
                             <p class="text-gray-600 mb-2"><strong>著者:</strong> {{ $book->author }}</p>
@@ -110,9 +117,11 @@
                                 <h3 class="font-semibold mb-3">レビューを投稿</h3>
                                 <form action="{{ route('reviews.store', $book) }}" method="POST" novalidate>
                                     @csrf
+
                                     @error('book_id')
                                         <p class="text-sm text-red-600 mb-3">{{ $message }}</p>
                                     @enderror
+
                                     <div class="mb-4">
                                         <label for="rating"
                                             class="block text-sm font-medium text-gray-700 mb-1">評価</label>
@@ -174,40 +183,52 @@
                                         @endif
 
                                         <div class="mt-3 flex items-center justify-between">
-                                            {{-- 未実装のため一時的にコメントアウト（いいね機能：マイルストーン6で復活）
                                             <!-- いいねボタン -->
                                             @auth
-                                                @if (Auth::user()->likedReviews->contains($review->id))
-                                                    <form action="{{ route('reviews.like', $review) }}" method="POST" class="inline" novalidate>
+                                                @if (Auth::user()->id === $review->user_id)
+                                                    <span></span>
+                                                @elseif(Auth::user()->likedReviews->contains($review->id))
+                                                    <form action="{{ route('reviews.like', $review) }}" method="POST"
+                                                        class="inline" novalidate>
                                                         @csrf
-                                                        <button type="submit" class="text-blue-500 hover:text-blue-700 text-sm flex items-center">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/>
+                                                        <button type="submit"
+                                                            class="text-blue-500 hover:text-blue-700 text-sm flex items-center">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1"
+                                                                fill="currentColor" viewBox="0 0 20 20">
+                                                                <path
+                                                                    d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
                                                             </svg>
                                                             いいね済み ({{ $review->likedByUsers->count() }})
                                                         </button>
                                                     </form>
                                                 @else
-                                                    <form action="{{ route('reviews.like', $review) }}" method="POST" class="inline" novalidate>
+                                                    <form action="{{ route('reviews.like', $review) }}" method="POST"
+                                                        class="inline" novalidate>
                                                         @csrf
-                                                        <button type="submit" class="text-gray-500 hover:text-blue-500 text-sm flex items-center">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 20 20">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/>
+                                                        <button type="submit"
+                                                            class="text-gray-500 hover:text-blue-500 text-sm flex items-center">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1"
+                                                                fill="none" stroke="currentColor" stroke-width="2"
+                                                                viewBox="0 0 20 20">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
                                                             </svg>
                                                             いいね ({{ $review->likedByUsers->count() }})
                                                         </button>
                                                     </form>
                                                 @endif
                                             @else
-                                                <a href="{{ route('login') }}" class="text-gray-500 hover:text-blue-500 text-sm flex items-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 20 20">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/>
+                                                <a href="{{ route('login') }}"
+                                                    class="text-gray-500 hover:text-blue-500 text-sm flex items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1"
+                                                        fill="none" stroke="currentColor" stroke-width="2"
+                                                        viewBox="0 0 20 20">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
                                                     </svg>
                                                     いいね ({{ $review->likedByUsers->count() }})
                                                 </a>
                                             @endauth
-                                            --}}
-                                            <div></div>
 
                                             <!-- 編集・削除ボタン -->
                                             <div class="flex items-center gap-2">
