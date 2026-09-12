@@ -6,9 +6,11 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\RankingController;
+use App\Http\Controllers\GenreController;
 
 
 Route::get('/', [BookController::class, 'index'])->name('books.index');
+Route::get('/genres', [GenreController::class, 'index'])->name('genres.index');
 
 Route::middleware('auth')->group(function () {
     Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
@@ -24,10 +26,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
     Route::post('/books/{book}/favorites', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
     Route::post('/reviews/{review}/like', [LikeController::class, 'toggle'])->name('reviews.like');
+    Route::get('/genres/create', [GenreController::class, 'create'])->name('genres.create');
+    Route::post('/genres', [GenreController::class, 'store'])->name('genres.store');
+    Route::get('/genres/{genre}/edit', [GenreController::class, 'edit'])->name('genres.edit');
+    Route::put('/genres/{genre}', [GenreController::class, 'update'])->name('genres.update');
+    Route::delete('/genres/{genre}', [GenreController::class, 'destroy'])->name('genres.destroy');
 });
 
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
 Route::get('/ranking', [RankingController::class, 'index'])->name('ranking.index');
+Route::get('/genres/{genre}', [GenreController::class, 'show'])->name('genres.show');
 
-// TODO: 各機能実装後、正式なControllerに差し替える
-Route::get('/genres', fn () => view('genres.index'))->name('genres.index');

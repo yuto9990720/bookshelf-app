@@ -24,11 +24,9 @@
                     <x-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.index')">
                         {{ __('お気に入り') }}
                     </x-nav-link>
-                    {{-- 未実装のため一時的にコメントアウト（実装後に復活させる）
                     <x-nav-link :href="route('genres.index')" :active="request()->routeIs('genres.*')">
                         {{ __('ジャンル管理') }}
                     </x-nav-link>
-                    --}}
                 </div>
             </div>
 
@@ -102,11 +100,9 @@
             <x-responsive-nav-link :href="route('favorites.index')" :active="request()->routeIs('favorites.index')">
                 {{ __('お気に入り') }}
             </x-responsive-nav-link>
-            {{-- 未実装のため一時的にコメントアウト（実装後に復活させる）
             <x-responsive-nav-link :href="route('genres.index')" :active="request()->routeIs('genres.*')">
                 {{ __('ジャンル管理') }}
             </x-responsive-nav-link>
-            --}}
         </div>
 
         <!-- Responsive Settings Options -->
