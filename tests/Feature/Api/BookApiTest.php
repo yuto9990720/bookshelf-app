@@ -5,6 +5,7 @@ namespace Tests\Feature\Api;
 use App\Models\Book;
 use App\Models\Genre;
 use App\Models\User;
+use App\Models\Review;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -69,11 +70,15 @@ class BookApiTest extends TestCase
     public function test_can_get_book_detail(): void
     {
         $book = Book::factory()->create();
+        $review = Review::factory()->for($book)->create(['rating' => 5, 'comment' => '良い本でした。']);
 
         $response = $this->getJson("/api/v1/books/{$book->id}");
 
         $response->assertOk();
         $response->assertJsonPath('data.id', $book->id);
+         $response->assertJsonPath('data.reviews.0.user_name', $review->user->name);
+        $response->assertJsonPath('data.reviews.0.rating', 5);
+        $response->assertJsonPath('data.reviews.0.comment', '良い本でした。');
     }
 
     public function test_book_detail_returns_404_for_nonexistent_book(): void

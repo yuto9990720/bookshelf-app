@@ -38,7 +38,7 @@ class BookController extends Controller
 
     public function show(Book $book)
     {
-        $book->loadCount('reviews')->loadAvg('reviews', 'rating')->load('genres');
+        $book->loadCount('reviews')->loadAvg('reviews', 'rating')->load('genres', 'reviews.user');
 
         return new BookResource($book);
     }

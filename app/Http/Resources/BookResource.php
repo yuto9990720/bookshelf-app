@@ -21,6 +21,13 @@ class BookResource extends JsonResource
                 'id' => $genre->id,
                 'name' => $genre->name,
             ]),
+            'reviews' => $this->whenLoaded('reviews', fn () => $this->reviews->map(fn ($review) => [
+            'id' => $review->id,
+            'user_name' => $review->user->name,
+            'rating' => $review->rating,
+            'comment' => $review->comment,
+            'created_at' => $review->created_at->format('Y-m-d H:i:s'),
+        ])),
             'average_rating' => $this->reviews_avg_rating !== null
                 ? round($this->reviews_avg_rating, 1)
                 : null,
