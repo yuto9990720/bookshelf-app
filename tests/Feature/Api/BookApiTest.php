@@ -131,7 +131,7 @@ class BookApiTest extends TestCase
         ]);
 
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['title', 'author', 'isbn']);
+        $response->assertJsonValidationErrors(['title', 'author', 'genres','user_id']);
     }
 
     public function test_can_update_book_with_unchanged_isbn(): void

@@ -46,7 +46,7 @@ class BookCrudTest extends TestCase
             'title' => '',
         ]);
 
-        $response->assertSessionHasErrors(['title', 'author', 'isbn']);
+        $response->assertSessionHasErrors(['title', 'author', 'genres']);
     }
 
     public function test_book_creation_fails_with_duplicate_isbn(): void
