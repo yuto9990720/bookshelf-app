@@ -31,4 +31,29 @@ class BookRequest extends FormRequest
             'genres.*' => ['exists:genres,id'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'title.required' => 'タイトルは必須です。',
+            'title.string' => 'タイトルは文字列で入力してください。',
+            'title.max' => 'タイトルは255文字以内で入力してください。',
+            'author.required' => '著者は必須です。',
+            'author.string' => '著者は文字列で入力してください。',
+            'author.max' => '著者は255文字以内で入力してください。',
+            'isbn.required' => 'ISBNは必須です。',
+            'isbn.digits' => 'ISBNは13桁で入力してください。',
+            'isbn.unique' => 'ISBNはすでに使用されています。',
+            'published_date.required' => '出版日は必須です。',
+            'published_date.date' => '出版日は有効な日付を入力してください。',
+            'description.string' => '説明は文字列で入力してください。',
+            'description.max' => '説明は300文字以内で入力してください。',
+            'image_url.url' => '画像URLは有効なURL形式で入力してください。',
+            'image_url.max' => '画像URLは255文字以内で入力してください。',
+            'genres.required' => 'ジャンルを1つ以上選択してください。',
+            'genres.array' => 'ジャンルの形式が正しくありません。',
+            'genres.min' => 'ジャンルを1つ以上選択してください。',
+            'genres.*.exists' => '選択されたジャンルは正しくありません。',
+        ];
+    }
 }

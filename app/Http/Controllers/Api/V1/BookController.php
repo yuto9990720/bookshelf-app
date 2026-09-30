@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
-use App\Models\Genre;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+use App\Http\Requests\Api\V1\BookIndexRequest;
+use App\Http\Requests\Api\V1\StoreBookRequest;
+use App\Http\Requests\BookRequest;
 
 class BookController extends Controller
 {
-    public function index(Request $request)
+    public function index(BookIndexRequest $request)
     {
         $query = Book::withCount('reviews')->withAvg('reviews', 'rating')->with('genres');
 
@@ -29,9 +29,7 @@ class BookController extends Controller
             });
         }
 
-        $perPage = min($request->input('per_page', 20), 100);
-
-        $books = $query->paginate($perPage);
+       $books = $query->paginate((int) $request->input('per_page', 20));
 
         return BookResource::collection($books);
     }
@@ -43,41 +41,21 @@ class BookController extends Controller
         return new BookResource($book);
     }
 
-    public function store(Request $request)
+    public function store(StoreBookRequest $request)
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'author' => ['required', 'string', 'max:255'],
-            'isbn' => ['required', 'digits:13', 'unique:books,isbn'],
-            'published_date' => ['required', 'date'],
-            'description' => ['nullable', 'string', 'max:300'],
-            'image_url' => ['nullable', 'url', 'max:255'],
-            'genres' => ['required', 'array', 'min:1'],
-            'genres.*' => ['exists:genres,id'],
-            'user_id' => ['required', 'integer', 'exists:users,id'],
-        ]);
+        
 
-        $book = Book::create(collect($validated)->except('genres')->toArray());
-        $book->genres()->sync($validated['genres']);
+       $book = Book::create($request->safe()->except('genres'));
+        $book->genres()->sync($request->validated('genres'));
 
         return new BookResource($book->load('genres'));
     }
 
-    public function update(Request $request, Book $book)
+    public function update(BookRequest $request, Book $book)
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'author' => ['required', 'string', 'max:255'],
-            'isbn' => ['required', 'digits:13', Rule::unique('books', 'isbn')->ignore($book->id)],
-            'published_date' => ['required', 'date'],
-            'description' => ['nullable', 'string', 'max:300'],
-            'image_url' => ['nullable', 'url', 'max:255'],
-            'genres' => ['required', 'array', 'min:1'],
-            'genres.*' => ['exists:genres,id'],
-        ]);
-
-        $book->update(collect($validated)->except('genres')->toArray());
-        $book->genres()->sync($validated['genres']);
+        
+        $book->update($request->safe()->except('genres'));
+        $book->genres()->sync($request->validated('genres'));
 
         return new BookResource($book->load('genres'));
     }

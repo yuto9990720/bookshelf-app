@@ -64,7 +64,24 @@ class BookApiTest extends TestCase
 
         $response = $this->getJson('/api/v1/books?per_page=500');
 
-        $response->assertJsonPath('meta.per_page', 100);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('per_page');
+    }
+
+    public function test_book_list_rejects_invalid_search_parameters(): void
+    {
+        $response = $this->getJson('/api/v1/books?genre_id=99999&page=0');
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['genre_id', 'page']);
+    }
+
+    public function test_keyword_max_length_is_validated(): void
+    {
+        $response = $this->getJson('/api/v1/books?keyword=' . str_repeat('a', 256));
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('keyword');
     }
 
     public function test_can_get_book_detail(): void

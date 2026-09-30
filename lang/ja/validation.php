@@ -44,6 +44,11 @@ return [
         'comment' => 'コメント',       
         'email' => 'メールアドレス',
         'password' => 'パスワード',
+        'user_id' => '登録者ID',
+        'keyword' => 'キーワード',
+        'genre_id' => 'ジャンルID',
+        'page' => 'ページ番号',
+        'per_page' => '取得件数',
     ],
 
 ];
