@@ -6,21 +6,37 @@ use App\Models\Book;
 use App\Models\ReadingPlan;
 use App\Http\Requests\ReadingPlanRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Enums\ReadingPlanStatus;
+use Illuminate\Validation\Rule;
+use Illuminate\Http\Request;
 
 class ReadingPlanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $readingPlans = Auth::user()->readingPlans()->with('book')->paginate(10);
+        $validated = $request->validate([
+            'status' => ['nullable', Rule::enum(ReadingPlanStatus::class)],
+        ]);
 
-        return view('reading_plans.index', compact('readingPlans'));
+        $query = Auth::user()->readingPlans()->with('book');
+
+        if (! empty($validated['status'])) {
+            $query->where('status', $validated['status']);
+        }
+
+        $readingPlans = $query->paginate(10)->withQueryString();
+
+        return view('reading-plans.index', [
+            'readingPlans' => $readingPlans,
+            'currentStatus' => $validated['status'] ?? null,
+        ]);
     }
 
     public function create()
     {
         $books = Book::all();
 
-        return view('reading_plans.create', compact('books'));
+        return view('reading-plans.create', compact('books'));
     }
 
     public function store(ReadingPlanRequest $request)
@@ -34,9 +50,7 @@ class ReadingPlanController extends Controller
     {
         $this->authorize('update', $readingPlan);
 
-        $books = Book::all();
-
-        return view('reading_plans.edit', compact('readingPlan', 'books'));
+        return view('reading-plans.edit', compact('readingPlan'));
     }
 
     public function update(ReadingPlanRequest $request, ReadingPlan $readingPlan)

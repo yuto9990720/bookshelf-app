@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ReadingPlanRequest extends FormRequest
 {
@@ -14,21 +15,25 @@ class ReadingPlanRequest extends FormRequest
         return true;
     }
 
-    
     public function rules(): array
     {
-        $rules = [
-            'book_id' => ['required', 'integer', 'exists:books,id'],
-            'target_date' => ['required', 'date'],
-        ];
-
-        if ($this->isMethod('post')) {
-            $rules['book_id'][] = Rule::unique('reading_plans', 'book_id')
-                ->where('user_id', $this->user()->id)
-                ->where('status', 'in_progress');
+        if ($this->isMethod('put') || $this->isMethod('patch')) {
+            return [
+                'target_date' => ['required', 'date'],
+            ];
         }
 
-        return $rules;
+        return [
+            'book_id' => [
+                'required',
+                'integer',
+                'exists:books,id',
+                Rule::unique('reading_plans', 'book_id')
+                    ->where('user_id', $this->user()->id)
+                    ->where('status', 'in_progress'),
+            ],
+            'target_date' => ['required', 'date'],
+        ];
     }
 
     public function messages(): array

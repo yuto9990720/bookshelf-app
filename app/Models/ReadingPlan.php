@@ -27,6 +27,7 @@ class ReadingPlan extends Model
         'notified_before_at' => 'datetime',
         'notified_due_at' => 'datetime',
         'notified_after_at' => 'datetime',
+        'status' => \App\Enums\ReadingPlanStatus::class,
     ];
 
     public function user(): BelongsTo
