@@ -1,0 +1,13 @@
+[90m= [39m[34;4mApp\Models\ReadingPlan[39;24m {#7396
+    [34mid[39m: [35m3[39m,
+    [34muser_id[39m: [35m7[39m,
+    [34mbook_id[39m: [35m2[39m,
+    [34mtarget_date[39m: [32m"[39m[32m2026-10-06[39m[32m"[39m,
+    [34mstatus[39m: [32m"[39m[32min_progress[39m[32m"[39m,
+    [34mcompleted_at[39m: [36mnull[39m,
+    [34mnotified_before_at[39m: [32m"[39m[32m2026-10-03 17:02:20[39m[32m"[39m,
+    [34mnotified_due_at[39m: [36mnull[39m,
+    [34mnotified_after_at[39m: [36mnull[39m,
+    [34mcreated_at[39m: [32m"[39m[32m2026-10-03 17:02:04[39m[32m"[39m,
+    [34mupdated_at[39m: [32m"[39m[32m2026-10-03 17:02:20[39m[32m"[39m,
+  }
