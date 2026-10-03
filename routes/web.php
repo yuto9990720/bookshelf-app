@@ -8,6 +8,7 @@ use App\Http\Controllers\LikeController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\ReadingPlanController;
+use App\Http\Controllers\NotificationController;
 
 
 Route::get('/', [BookController::class, 'index'])->name('books.index');
@@ -39,6 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/reading-plans/{reading_plan}', [ReadingPlanController::class, 'update'])->name('reading-plans.update');
     Route::post('/reading-plans/{reading_plan}/complete', [ReadingPlanController::class, 'complete'])->name('reading-plans.complete');
     Route::delete('/reading-plans/{reading_plan}', [ReadingPlanController::class, 'destroy'])->name('reading-plans.destroy');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'read'])->name('notifications.read');
 });
 
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
