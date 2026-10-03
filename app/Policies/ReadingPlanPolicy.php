@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\ReadingPlan;
 use App\Models\User;
+use App\Enums\ReadingPlanStatus;
 
 
 class ReadingPlanPolicy
@@ -12,7 +13,7 @@ class ReadingPlanPolicy
     public function update(User $user, ReadingPlan $readingPlan): bool
     {
         return $user->id === $readingPlan->user_id
-            && $readingPlan->status !== 'completed';
+            && $readingPlan->status !== ReadingPlanStatus::Completed;
     }
 
     public function delete(User $user, ReadingPlan $readingPlan): bool
