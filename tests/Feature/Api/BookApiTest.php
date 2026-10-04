@@ -110,36 +110,41 @@ class BookApiTest extends TestCase
     {
         $genre = Genre::factory()->create();
         $user = User::factory()->create();
+        $token = $user->createToken('test-token')->plainTextToken;
 
-        $response = $this->postJson('/api/v1/books', [
+        $response = $this->withHeader('Authorization', "Bearer {$token}")->postJson('/api/v1/books', [
             'title' => 'APIテスト本',
             'author' => 'テスト太郎',
             'isbn' => '9780000000001',
             'published_date' => '2024-01-01',
             'genres' => [$genre->id],
-            'user_id' => $user->id,
         ]);
 
         $response->assertCreated();
-        $this->assertDatabaseHas('books', ['title' => 'APIテスト本']);
+        $this->assertDatabaseHas('books', ['title' => 'APIテスト本', 'user_id' => $user->id]);
     }
 
     public function test_create_book_fails_with_invalid_data(): void
     {
-        $response = $this->postJson('/api/v1/books', [
+        $user = User::factory()->create();
+        $token = $user->createToken('test-token')->plainTextToken;
+
+        $response = $this->withHeader('Authorization', "Bearer {$token}")->postJson('/api/v1/books', [
             'title' => '',
         ]);
 
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['title', 'author', 'genres','user_id']);
+        $response->assertJsonValidationErrors(['title', 'author', 'genres']);
     }
 
     public function test_can_update_book_with_unchanged_isbn(): void
     {
         $book = Book::factory()->create(['isbn' => '9780000000001']);
         $genre = Genre::factory()->create();
+        $user = $book->user;
+        $token = $user->createToken('test-token')->plainTextToken;
 
-        $response = $this->putJson("/api/v1/books/{$book->id}", [
+        $response = $this->withHeader('Authorization', "Bearer {$token}")->putJson("/api/v1/books/{$book->id}", [
             'title' => '更新後タイトル',
             'author' => $book->author,
             'isbn' => '9780000000001',
@@ -154,8 +159,10 @@ class BookApiTest extends TestCase
     public function test_can_delete_book(): void
     {
         $book = Book::factory()->create();
+        $user = $book->user;
+        $token = $user->createToken('test-token')->plainTextToken;
 
-        $response = $this->deleteJson("/api/v1/books/{$book->id}");
+        $response = $this->withHeader('Authorization', "Bearer {$token}")->deleteJson("/api/v1/books/{$book->id}");
 
         $response->assertNoContent();
         $this->assertDatabaseMissing('books', ['id' => $book->id]);
