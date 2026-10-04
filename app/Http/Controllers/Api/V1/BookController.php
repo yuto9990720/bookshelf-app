@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
 use App\Http\Requests\Api\V1\BookIndexRequest;
-use App\Http\Requests\Api\V1\StoreBookRequest;
 use App\Http\Requests\BookRequest;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
@@ -41,11 +41,14 @@ class BookController extends Controller
         return new BookResource($book);
     }
 
-    public function store(StoreBookRequest $request)
+    public function store(BookRequest $request)
     {
         
 
-       $book = Book::create($request->safe()->except('genres'));
+         $book = Book::create([
+            ...$request->safe()->except('genres'),
+            'user_id' => Auth::id(),
+        ]);
         $book->genres()->sync($request->validated('genres'));
 
         return new BookResource($book->load('genres'));
@@ -53,7 +56,8 @@ class BookController extends Controller
 
     public function update(BookRequest $request, Book $book)
     {
-        
+        $this->authorize('update', $book);
+
         $book->update($request->safe()->except('genres'));
         $book->genres()->sync($request->validated('genres'));
 
@@ -62,6 +66,7 @@ class BookController extends Controller
 
     public function destroy(Book $book)
     {
+        $this->authorize('delete', $book);
         $book->delete();
 
         return response()->json(null, 204);
