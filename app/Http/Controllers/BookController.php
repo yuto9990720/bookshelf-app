@@ -6,14 +6,40 @@ use App\Models\Book;
 use App\Models\Genre;
 use App\Http\Requests\BookRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class BookController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $books = Book::with('genres')->paginate(10);
+        $query = Book::with('genres')->withCount('reviews')->withAvg('reviews', 'rating');
 
-        return view('books.index', compact('books'));
+        if ($request->filled('keyword')) {
+            $keyword = $request->input('keyword');
+            $query->where(function ($q) use ($keyword) {
+                $q->where('title', 'like', "%{$keyword}%")
+                ->orWhere('author', 'like', "%{$keyword}%");
+            });
+        }
+
+        if ($request->filled('genre')) {
+            $query->whereHas('genres', function ($q) use ($request) {
+                $q->where('genres.id', $request->input('genre'));
+            });
+        }
+
+        match ($request->input('sort', 'newest')) {
+            'oldest' => $query->orderBy('created_at'),
+            'title' => $query->orderBy('title'),
+            'rating' => $query->orderByRaw('reviews_count = 0')->orderByDesc('reviews_avg_rating'),
+            default => $query->orderByDesc('created_at'),
+        };
+
+        $books = $query->paginate(10)->withQueryString();
+        $genres = Genre::all();
+
+        return view('books.index', compact('books', 'genres'));
     }
 
     public function create()
@@ -66,5 +92,27 @@ class BookController extends Controller
         $book->delete();
 
         return redirect()->route('books.index')->with('success', '書籍を削除しました。');
+    }
+
+    public function searchByIsbn(string $isbn)
+    {
+        $response = Http::get('https://www.googleapis.com/books/v1/volumes', [
+            'q' => "isbn:{$isbn}",
+            'key' => config('services.google_books.key'),
+        ]);
+
+        if ($response->failed() || empty($response->json('items'))) {
+            return response()->json(['error' => '書籍情報が見つかりませんでした。'], 404);
+        }
+
+        $volumeInfo = $response->json('items.0.volumeInfo');
+
+        return response()->json([
+            'title' => $volumeInfo['title'] ?? null,
+            'author' => implode('、', $volumeInfo['authors'] ?? []),
+            'description' => $volumeInfo['description'] ?? null,
+            'image_url' => $volumeInfo['imageLinks']['thumbnail'] ?? null,
+            'published_date' => $volumeInfo['publishedDate'] ?? null,
+        ]);
     }
 }

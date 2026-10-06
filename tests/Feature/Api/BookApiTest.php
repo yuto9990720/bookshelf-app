@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Review;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Laravel\Sanctum\Sanctum;
 
 class BookApiTest extends TestCase
 {
@@ -110,9 +111,9 @@ class BookApiTest extends TestCase
     {
         $genre = Genre::factory()->create();
         $user = User::factory()->create();
-        $token = $user->createToken('test-token')->plainTextToken;
+         Sanctum::actingAs($user, ['*']);
 
-        $response = $this->withHeader('Authorization', "Bearer {$token}")->postJson('/api/v1/books', [
+        $response = $this->postJson('/api/v1/books', [
             'title' => 'APIテスト本',
             'author' => 'テスト太郎',
             'isbn' => '9780000000001',
@@ -127,9 +128,9 @@ class BookApiTest extends TestCase
     public function test_create_book_fails_with_invalid_data(): void
     {
         $user = User::factory()->create();
-        $token = $user->createToken('test-token')->plainTextToken;
+        Sanctum::actingAs($user, ['*']);
 
-        $response = $this->withHeader('Authorization', "Bearer {$token}")->postJson('/api/v1/books', [
+        $response = $this->postJson('/api/v1/books', [
             'title' => '',
         ]);
 
@@ -141,10 +142,10 @@ class BookApiTest extends TestCase
     {
         $book = Book::factory()->create(['isbn' => '9780000000001']);
         $genre = Genre::factory()->create();
-        $user = $book->user;
-        $token = $user->createToken('test-token')->plainTextToken;
+        Sanctum::actingAs($book->user, ['*']);
 
-        $response = $this->withHeader('Authorization', "Bearer {$token}")->putJson("/api/v1/books/{$book->id}", [
+
+        $response = $this->putJson("/api/v1/books/{$book->id}", [
             'title' => '更新後タイトル',
             'author' => $book->author,
             'isbn' => '9780000000001',
@@ -159,10 +160,9 @@ class BookApiTest extends TestCase
     public function test_can_delete_book(): void
     {
         $book = Book::factory()->create();
-        $user = $book->user;
-        $token = $user->createToken('test-token')->plainTextToken;
+        Sanctum::actingAs($book->user, ['*']);
 
-        $response = $this->withHeader('Authorization', "Bearer {$token}")->deleteJson("/api/v1/books/{$book->id}");
+        $response = $this->deleteJson("/api/v1/books/{$book->id}");
 
         $response->assertNoContent();
         $this->assertDatabaseMissing('books', ['id' => $book->id]);
