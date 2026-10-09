@@ -43,7 +43,7 @@ class ReadingPlanController extends Controller
     {
         Auth::user()->readingPlans()->create($request->validated());
 
-        return redirect()->route('reading-plans.index')->with('success', '読書計画を登録しました。');
+        return redirect()->route('reading-plans.index')->with('success', '読書計画を作成しました。');
     }
 
     public function edit(ReadingPlan $readingPlan)

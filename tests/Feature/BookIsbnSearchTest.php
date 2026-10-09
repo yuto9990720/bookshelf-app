@@ -52,7 +52,7 @@ class BookIsbnSearchTest extends TestCase
         $response = $this->actingAs($user)->getJson('/books/isbn/9780000000000');
 
         $response->assertStatus(404);
-        $response->assertJson(['error' => '書籍情報が見つかりませんでした。']);
+        $response->assertJson(['error' => '書籍が見つかりませんでした。']);
     }
 
     public function test_isbn_search_returns_error_when_api_fails(): void
@@ -65,7 +65,21 @@ class BookIsbnSearchTest extends TestCase
 
         $response = $this->actingAs($user)->getJson('/books/isbn/9784873115658');
 
-        $response->assertStatus(404);
-        $response->assertJson(['error' => '書籍情報が見つかりませんでした。']);
+        $response->assertStatus(429);
+        $response->assertJson(['error' =>'Google Books API のクォータを超過しました。.env に GOOGLE_BOOKS_API_KEY を設定してください。']);
+    }
+
+    public function test_isbn_search_returns_error_on_server_failure(): void
+    {
+        $user = User::factory()->create();
+
+        Http::fake([
+            'www.googleapis.com/*' => Http::response([], 503),
+        ]);
+
+        $response = $this->actingAs($user)->getJson('/books/isbn/9784873115658');
+
+        $response->assertStatus(500);
+        $response->assertJson(['error' => 'API通信エラーが発生しました。']);
     }
 }

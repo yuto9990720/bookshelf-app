@@ -58,7 +58,7 @@ class BookController extends Controller
 
         $book->genres()->sync($request->validated('genres'));
 
-        return redirect()->route('books.show', $book)->with('success', '書籍を登録しました。');
+        return redirect()->route('books.show', $book)->with('success', '書籍を作成しました。');
     }
 
     public function show(Book $book)
@@ -96,13 +96,27 @@ class BookController extends Controller
 
     public function searchByIsbn(string $isbn)
     {
-        $response = Http::get('https://www.googleapis.com/books/v1/volumes', [
-            'q' => "isbn:{$isbn}",
-            'key' => config('services.google_books.key'),
-        ]);
+        try {
+            $response = Http::get('https://www.googleapis.com/books/v1/volumes', [
+                'q' => "isbn:{$isbn}",
+                'key' => config('services.google_books.key'),
+            ]);
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            return response()->json(['error' => 'API通信エラーが発生しました。'], 500);
+        }
 
-        if ($response->failed() || empty($response->json('items'))) {
-            return response()->json(['error' => '書籍情報が見つかりませんでした。'], 404);
+        if ($response->status() === 429) {
+            return response()->json([
+                'error' => 'Google Books API のクォータを超過しました。.env に GOOGLE_BOOKS_API_KEY を設定してください。',
+            ], 429);
+        }
+
+        if ($response->failed()) {
+            return response()->json(['error' => 'API通信エラーが発生しました。'], 500);
+        }
+
+        if (empty($response->json('items'))) {
+            return response()->json(['error' => '書籍が見つかりませんでした。'], 404);
         }
 
         $volumeInfo = $response->json('items.0.volumeInfo');
@@ -115,4 +129,5 @@ class BookController extends Controller
             'published_date' => $volumeInfo['publishedDate'] ?? null,
         ]);
     }
+
 }
