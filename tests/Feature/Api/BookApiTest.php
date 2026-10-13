@@ -167,4 +167,38 @@ class BookApiTest extends TestCase
         $response->assertNoContent();
         $this->assertDatabaseMissing('books', ['id' => $book->id]);
     }
+
+    public function test_guest_cannot_create_book(): void
+    {
+        $genre = Genre::factory()->create();
+
+        $response = $this->postJson('/api/v1/books', [
+            'title' => 'テスト本',
+            'author' => 'テスト著者',
+            'isbn' => '9784000000000',
+            'genres' => [$genre->id],
+        ]);
+
+        $response->assertStatus(401);
+    }
+
+    public function test_guest_cannot_update_book(): void
+    {
+        $book = Book::factory()->create();
+
+        $response = $this->putJson("/api/v1/books/{$book->id}", [
+            'title' => '更新後タイトル',
+        ]);
+
+        $response->assertStatus(401);
+    }
+
+    public function test_guest_cannot_delete_book(): void
+    {
+        $book = Book::factory()->create();
+
+        $response = $this->deleteJson("/api/v1/books/{$book->id}");
+
+        $response->assertStatus(401);
+    }
 }
