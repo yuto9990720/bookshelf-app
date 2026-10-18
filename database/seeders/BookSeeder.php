@@ -11,7 +11,7 @@ class BookSeeder extends Seeder
 {
     public function run(): void
     {
-        $userId = User::first()->id;
+        $users = User::all();
 
         $books = [
             ['no' => 1, 'title' => '吾輩は猫である', 'author' => '夏目漱石', 'isbn' => '9784101010014', 'published_date' => '1905-01-01', 'description' => '教師の家に迷い込んだ一匹の猫の目を通して、人間社会を風刺的かつユーモラスに描いた夏目漱石の代表作。', 'genres' => ['小説']],
@@ -36,7 +36,7 @@ class BookSeeder extends Seeder
                     'published_date' => $data['published_date'],
                     'description' => $data['description'],
                     'image_url' => "https://placehold.co/200x300/e2e8f0/475569?text={$data['no']}",
-                    'user_id' => $userId,
+                    'user_id' => $users->random()->id,
                 ]
             );
 
